@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const endPoints = require("../endpoints.json")
 
 beforeEach(() => seed(testData));
 
@@ -34,3 +35,16 @@ describe("GET /api/topics", () => {
       });
   });
 });
+describe("GET /api/", () => {
+    test("When requesting the API, simply responds with the details of the various endpoints", () => {
+        return request(app)
+        .get("/api/")
+        .expect(200)
+        .then(({ body }) => {
+            const apiData  = body;
+            console.log(apiData, endPoints)
+
+            expect(apiData).toEqual( endPoints );
+        })
+    })
+})

@@ -3,9 +3,12 @@ const app = express();
 const {
   sendTopicData,
   sendCustom404,
+  sendApiData,
 } = require("./controllers/news-controllers");
 
 app.get("/api/topics", sendTopicData);
+
+app.get("/api/", sendApiData);
 
 app.get("*", sendCustom404);
 

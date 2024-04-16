@@ -15,3 +15,9 @@ npm i pg
 npm i pg-format -D
 npm i dotenv
 npm i express
+
+# Tickets Completed
+
+1. Project Setup: "sets up project"
+2. GET Topic: "Send a GET request and receives topic data"
+3. GET API: "Send a GET request for the API data and receives endpoints.json"
