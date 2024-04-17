@@ -3,7 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
-const endPoints = require("../endpoints.json")
+const endPoints = require("../endpoints.json");
 
 beforeEach(() => seed(testData));
 
@@ -36,15 +36,53 @@ describe("GET /api/topics", () => {
   });
 });
 describe("GET /api/", () => {
-    test("When requesting the API, simply responds with the details of the various endpoints", () => {
-        return request(app)
-        .get("/api/")
-        .expect(200)
-        .then(({ body }) => {
-            const apiData  = body;
-            console.log(apiData, endPoints)
+  test("When requesting the API, simply responds with the details of the various endpoints", () => {
+    return request(app)
+      .get("/api/")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(endPoints);
+      });
+  });
+});
 
-            expect(apiData).toEqual( endPoints );
-        })
+describe.only("GET Article by ID", () => {
+  test("When requesting an article by its ID, returns status code 200 and an article object", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          })
+        );
+      });
+  });
+  test("When requesting an article by an ID num which doesn't exist, returns status 404 and message 'Not Found'", () => {
+    return request(app)
+      .get("/api/articles/45")
+      .expect(404)
+      .then(({ body }) => {
+        const  { msg }  = body;
+        expect(msg).toBe("Article ID Not Found");
+      });
+  });
+  test("When requesting an article by an incorrect data type (eg, a string), returns status 400 and message 'Bad Request'",() => {
+    return request(app)
+    .get("/api/articles/two")
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request")
     })
-})
+  })
+});

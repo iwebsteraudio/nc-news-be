@@ -5,19 +5,12 @@ Into each file, please add 'PGDATABASE=', with the correct database name for tha
 
 # Dependencies to Install
 
-
-npm i -y
-npm i jest -D
-npm i jest-sorted -D
-npm i nodemon -D
-npm i supertest -D
-npm i pg
-npm i pg-format -D
-npm i dotenv
-npm i express
+npm i
 
 # Tickets Completed
 
 1. Project Setup: "sets up project"
 2. GET Topic: "Send a GET request and receives topic data"
 3. GET API: "Send a GET request for the API data and receives endpoints.json"
+    HINT - I've chosen to put the getAPI controller in topics-controller.
+4. GET Article by ID: "Send a GET request for an article which responds with the relevant properties"

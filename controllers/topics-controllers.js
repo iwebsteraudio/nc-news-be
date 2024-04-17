@@ -1,4 +1,4 @@
-const { fetchTopics } = require("../models/news-models");
+const { fetchTopics } = require("../models/topics-models");
 const  apiData  = require("../endpoints.json")
 
 

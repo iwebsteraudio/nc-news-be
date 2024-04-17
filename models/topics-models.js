@@ -14,9 +14,5 @@ const fetchTopics = ()=>{
     })
 }
 
-// const fetchApiData = () => {
-//     return db.query
-// }
-
 
 module.exports = { fetchTopics };
