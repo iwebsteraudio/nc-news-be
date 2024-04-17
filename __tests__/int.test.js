@@ -46,7 +46,7 @@ describe("GET /api/", () => {
   });
 });
 
-describe.only("GET Article by ID", () => {
+describe("GET Article by ID", () => {
   test("When requesting an article by its ID, returns status code 200 and an article object", () => {
     return request(app)
       .get("/api/articles/1")
@@ -72,17 +72,82 @@ describe.only("GET Article by ID", () => {
       .get("/api/articles/45")
       .expect(404)
       .then(({ body }) => {
-        const  { msg }  = body;
+        const { msg } = body;
         expect(msg).toBe("Article ID Not Found");
       });
   });
-  test("When requesting an article by an incorrect data type (eg, a string), returns status 400 and message 'Bad Request'",() => {
+  test("When requesting an article by an incorrect data type (eg, a string), returns status 400 and message 'Bad Request'", () => {
     return request(app)
-    .get("/api/articles/two")
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Bad Request")
-    })
-  })
+      .get("/api/articles/two")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+describe("GET API Articles", () => {
+  test("Returns status 200 and all articles when requested", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData.length).toBe(13);
+        articleData.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("Returns status 200 and all articles, with body omitted)", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData.length).toBe(13);
+        articleData.forEach((article) => {
+          expect(article).not.toEqual(
+            expect.objectContaining({
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  test("Checks that articles are sorted by date", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("Returns the articles including comment count", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        articleData.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({ comment_count: expect.any(String) })
+          );
+        });
+      });
+  });
+  
 });

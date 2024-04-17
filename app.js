@@ -5,7 +5,7 @@ const {
   sendCustom404,
   sendApiData,
 } = require("./controllers/topics-controllers");
-const { sendArticleById } = require("./controllers/articles-controllers")
+const { sendArticleById, sendArticleData } = require("./controllers/articles-controllers")
 
 
 app.get("/api/topics", sendTopicData);
@@ -13,6 +13,8 @@ app.get("/api/topics", sendTopicData);
 app.get("/api/", sendApiData);
 
 app.get("/api/articles/:article_id", sendArticleById);
+
+app.get("/api/articles", sendArticleData)
 
 app.all("*", sendCustom404);
 
