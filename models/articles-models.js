@@ -24,4 +24,10 @@ const fetchArticleData = () => {
   });
 };
 
+const fetchCommentsByArticleId = () => {
+  return db.query(
+    
+  )
+}
+
 module.exports = { fetchArticleById, fetchArticleData };

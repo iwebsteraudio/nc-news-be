@@ -14,4 +14,5 @@ npm i
 3. GET API: "Send a GET request for the API data and receives endpoints.json"
     HINT - I've chosen to put the getAPI controller in topics-controller.
 4. GET Article by ID: "Send a GET request for an article which responds with the relevant properties"
-5. GET Article: "Gets all articles and returns array of all articles, ommitting body"
+5. GET Article: "Gets all articles and returns array of all articles, ommitting body. Sorts by created_on date, descending"
+6. GET Comments by Article ID: "Gets an array of comments for a given article_id with the most recent first".

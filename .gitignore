@@ -1,3 +1,5 @@
 node_modules
 .env.*
 scratchPad.js
+scratchPad.sql
+*.txt
