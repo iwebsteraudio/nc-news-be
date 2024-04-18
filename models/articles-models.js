@@ -24,4 +24,14 @@ const fetchArticleData = () => {
   });
 };
 
-module.exports = { fetchArticleById, fetchArticleData };
+const fetchCommentData = (article_id) => {
+  return db.query(
+    `SELECT * 
+    FROM comments WHERE article_id = ${article_id}
+    ORDER BY created_at DESC;`
+  ).then(({ rows } ) => {
+    return rows;
+  })
+}
+
+module.exports = { fetchArticleById, fetchArticleData, fetchCommentData };

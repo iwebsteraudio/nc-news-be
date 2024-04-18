@@ -149,5 +149,44 @@ describe("GET API Articles", () => {
         });
       });
   });
-  
+});
+describe("GET Comments by Article ID", () => {
+  test("Returns a status 200 and an array containing comment objects when requested by article ID", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { commentData } = body;
+        expect(commentData.length).toBe(11);
+        expect(commentData).toBeSortedBy("created_at", { descending: true });
+        commentData.forEach((comment) => {
+          expect.objectContaining({
+            comment_id: expect.any(String),
+            votes: expect.any(String),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(String),
+          });
+        });
+      });
+  });
+  test("Returns error 400 'Bad Request' when given an invalid request",()=>{
+    return request(app)
+    .get("/api/articles/ilovecommentsme/comments")
+    .expect(400)
+    .then(({body})=>{
+      const { msg } = body;
+      expect(msg).toBe("Bad Request")
+    })
+  })
+  test("Returns error 404 'Not Found' when given a valid request type which doesn't exists",()=>{
+    return request(app)
+    .get("/api/article/100000/comments")
+    .expect(404)
+    .then(({ body })=>{
+      const {msg} = body;
+      expect(msg).toBe("Not Found")
+    })
+  })
 });
