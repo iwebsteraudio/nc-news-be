@@ -10,12 +10,12 @@
 --psql -f scratchPad.sql > output.txt
 
 
--- SELECT * FROM comments;
+SELECT * FROM articles;
 -- SELECT articles.article_id
 -- FROM articles
 -- LEFT JOIN comments ON comments.article_id = articles.article_id
-INSERT INTO comments
-    (article_id, author, body)
-    VALUES (2,"lurker","TEST")
-    RETURNING *;
+-- INSERT INTO comments
+--     (article_id, author, body)
+--     VALUES (2,"lurker","TEST")
+--     RETURNING *;
 

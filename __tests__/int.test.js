@@ -231,17 +231,42 @@ describe("POST comment by article ID", () => {
         expect(msg).toBe("Bad Request");
       });
   });
-  test("Responds with 400 Bad Request when posting a comment to an article where the path is an invalid data type (eg. a string)",()=>{
+  test("Responds with 400 Bad Request when posting a comment to an article where the path is an invalid data type (eg. a string)", () => {
     return request(app)
-    .post("/api/articles/pi/comments")
-    .send({
-      username: "lurker",
-      body: "Bought a pirate copy of Bohemian Rhapsody the other day. Must've been shot in a cinema because every few minutes I see a silhouette of a man."
-    })
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Bad Request")
-    })
+      .post("/api/articles/pi/comments")
+      .send({
+        username: "lurker",
+        body: "Bought a pirate copy of Bohemian Rhapsody the other day. Must've been shot in a cinema because every few minutes I see a silhouette of a man.",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+describe("PATCH - Increases votes by article_id", () => {
+  test("When given a request body with a key of inc_votes and an INT, updates the vote count and returns the updated article with increased vote count", () => {
+    return request(app)
+      .patch("/api/articles/2")
+      .expect(202)
+      .send({ inc_votes: 1 })
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData).toMatchObject({
+          votes: 1,
+        });
+      });
+  });
+  test("When given a patch request with an incorrect data type to increase votes (a string for example), responds with 400, bad request",()=>{
+    return request(app)
+  .patch("/api/articles/2")
+  .expect(400)
+  .send({ inc_votes: "vegetables"})
+  .then(({ body }) => {
+    const { msg } = body;
+    expect(msg).toBe("Bad Request")
   })
+
+})
 });
