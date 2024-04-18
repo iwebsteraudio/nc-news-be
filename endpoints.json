@@ -60,5 +60,12 @@
       "body": "This is a test comment",
       "article_id":  "article_id"
     }
+  },
+  "PATCH /api/articles/:article_id":{
+    "description": "increases the number of votes on an article",
+    "queries": ["id"],
+    "exampleResponse":{
+      "votes": "any.Number"
+    }
   }
 }
