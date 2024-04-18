@@ -49,6 +49,16 @@
       "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
       "article_id": "9"
     }
+  },
+  "POST /api/articles/:article_id/comments":{
+    "description": "Posts a comment to a given article_id and responds with that comment",
+    "queries": ["id"],
+    "exampleResponse": {
+      "comment_id": "any.Number",
+      "created_at": "any.String",
+      "author": "user_name",
+      "body": "This is a test comment",
+      "article_id":  "article_id"
+    }
   }
-  
 }

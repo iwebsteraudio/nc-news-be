@@ -171,22 +171,77 @@ describe("GET Comments by Article ID", () => {
         });
       });
   });
-  test("Returns error 400 'Bad Request' when given an invalid request",()=>{
+  test("Returns error 400 'Bad Request' when given an invalid request", () => {
     return request(app)
-    .get("/api/articles/ilovecommentsme/comments")
+      .get("/api/articles/ilovecommentsme/comments")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("Returns error 404 'Not Found' when given a valid request type which doesn't exists", () => {
+    return request(app)
+      .get("/api/article/100000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("POST comment by article ID", () => {
+  test("Responds with object containing a username and comment when a comment is posted", () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send({ username: "lurker", body: "This is a Test Comment" })
+      .expect(201)
+      .then(({ body }) => {
+        const { commentData } = body;
+        expect(commentData).toMatchObject({
+          comment_id: 19,
+          article_id: 2,
+          votes: 0,
+          author: "lurker",
+          body: "This is a Test Comment",
+        });
+      });
+  });
+  test("Responds with 400 bad request when posting a comment from an unknown user", () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send({ username: "senordingdong", body: "ay ay ay senor dingdong!" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("Responds with 400 bad request when posting a comment to an article which doesn't exist, where the path is a correct datatype (ie. a number)", () => {
+    return request(app)
+      .post("/api/articles/31416/comments")
+      .send({
+        username: "lurker",
+        body: "I ain't the sharpest tool in the shed",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("Responds with 400 Bad Request when posting a comment to an article where the path is an invalid data type (eg. a string)",()=>{
+    return request(app)
+    .post("/api/articles/pi/comments")
+    .send({
+      username: "lurker",
+      body: "Bought a pirate copy of Bohemian Rhapsody the other day. Must've been shot in a cinema because every few minutes I see a silhouette of a man."
+    })
     .expect(400)
-    .then(({body})=>{
+    .then(({ body }) => {
       const { msg } = body;
       expect(msg).toBe("Bad Request")
-    })
-  })
-  test("Returns error 404 'Not Found' when given a valid request type which doesn't exists",()=>{
-    return request(app)
-    .get("/api/article/100000/comments")
-    .expect(404)
-    .then(({ body })=>{
-      const {msg} = body;
-      expect(msg).toBe("Not Found")
     })
   })
 });
