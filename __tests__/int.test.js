@@ -249,7 +249,7 @@ describe("PATCH - Increases votes by article_id", () => {
   test("When given a request body with a key of inc_votes and an INT, updates the vote count and returns the updated article with increased vote count", () => {
     return request(app)
       .patch("/api/articles/2")
-      .expect(202)
+      .expect(200)
       .send({ inc_votes: 1 })
       .then(({ body }) => {
         const { articleData } = body;
@@ -292,3 +292,21 @@ describe("DELETE comment by comment id", () => {
     })
   })
 });
+describe.only("GET API Users",()=>{
+  test("Should return status 200 and an array containing all user objects",()=>{
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then(({ body })=>{
+      const { userData } = body;
+      expect(userData.length).toBe(4)
+      userData.forEach((user)=>{
+        expect.objectContaining({
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String)
+        })
+      })
+    })
+  })
+})

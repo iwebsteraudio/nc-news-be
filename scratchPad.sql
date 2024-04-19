@@ -8,11 +8,11 @@
 
 
 --psql -f scratchPad.sql > output.txt
-SELECT * FROM comments
+SELECT * FROM users
 
-DELETE $1
-FROM comments
-WHERE comment_id = 1;
+-- DELETE $1
+-- FROM comments
+-- WHERE comment_id = 1;
 
 -- SELECT articles.article_id
 -- FROM articles
