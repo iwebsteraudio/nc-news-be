@@ -57,7 +57,6 @@ exports.deleteCommendById = (req, res, next) => {
   const { comment_id } = req.params;
   removeCommentById(comment_id)
     .then((commentData) => {
-      console.log(commentData)
       if(commentData.length === 0){
         return Promise.reject({
           status: 404,
