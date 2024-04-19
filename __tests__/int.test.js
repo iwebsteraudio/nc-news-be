@@ -273,40 +273,80 @@ describe("DELETE comment by comment id", () => {
   test("When given a delete request and a comment_id, deletes that comment", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
-  test("When given a delete request for a comment id which doesn't exist, returns 40 Not Found",()=>{
+  test("When given a delete request for a comment id which doesn't exist, returns 40 Not Found", () => {
     return request(app)
-    .delete("/api/comments/9999")
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("comment not found");
+      });
+  });
+  test("When given an invalid id, returns 400, Bad Request", () => {
+    return request(app)
+      .delete("/api/comments/NaN")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+describe("GET API Users", () => {
+  test("Should return status 200 and an array containing all user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { userData } = body;
+        expect(userData.length).toBe(4);
+        userData.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+describe("GET API Articles by topic query", () => {
+  test("Responds with 200 and an array of all articles, filtered by topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData.length).toBe(1);
+        articleData.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          });
+        });
+      });
+  })
+  test("Responds with 404 - Not Found when given an invalid query",()=>{
+    return request(app)
+    .get("/api/articles?topic=match")
     .expect(404)
-    .then(({body})=>{
-      const { msg } = body;
-      expect(msg).toBe('comment not found')
+    .then(({ body }) => {
+      const {msg} = body;
+      expect(msg).toBe("Not Found")
     })
   })
-  test("When given an invalid id, returns 400, Bad Request",()=>{
+  test("Responds with 200 and empty array if given a valid topic with no articles",()=>{
     return request(app)
-    .delete("/api/comments/NaN")
-    .expect(400)
-    .then(({body})=>{
-      const { msg } = body;
-      expect(msg).toBe('Bad Request')
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(0)
     })
   })
 });
-describe.only("GET API Users",()=>{
-  test("Should return status 200 and an array containing all user objects",()=>{
-    return request(app)
-    .get("/api/users")
-    .expect(200)
-    .then(({ body })=>{
-      const { userData } = body;
-      expect(userData.length).toBe(4)
-      userData.forEach((user)=>{
-        expect.objectContaining({
-          username: expect.any(String),
-          name: expect.any(String),
-          avatar_url: expect.any(String)
-        })
-      })
-    })
-  })
-})
