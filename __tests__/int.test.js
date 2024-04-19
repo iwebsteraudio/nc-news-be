@@ -53,20 +53,19 @@ describe("GET Article by ID", () => {
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article).toEqual(
-          expect.objectContaining({
-            article_id: expect.any(Number),
-            title: expect.any(String),
-            topic: expect.any(String),
-            author: expect.any(String),
-            body: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-          })
-        );
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
       });
   });
+
   test("When requesting an article by an ID num which doesn't exist, returns status 404 and message 'Not Found'", () => {
     return request(app)
       .get("/api/articles/45")
@@ -330,23 +329,55 @@ describe("GET API Articles by topic query", () => {
           });
         });
       });
-  })
-  test("Responds with 404 - Not Found when given an invalid query",()=>{
+  });
+  test("Responds with 404 - Not Found when given an invalid query", () => {
     return request(app)
-    .get("/api/articles?topic=match")
+      .get("/api/articles?topic=match")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Not Found");
+      });
+  });
+  test("Responds with 200 and empty array if given a valid topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData.length).toBe(0);
+      });
+  });
+});
+describe("GET API Articles by id Comment count", () => {
+  test("Adds a comment count to articles by id request", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect.objectContaining({
+          comment_count: "11"
+        });
+      });
+  });
+  test("Receives error 404 not found when given an incorrect article id number", () => {
+    return request(app)
+    .get("/api/articles/100")
     .expect(404)
     .then(({ body }) => {
-      const {msg} = body;
-      expect(msg).toBe("Not Found")
-    })
-  })
-  test("Responds with 200 and empty array if given a valid topic with no articles",()=>{
+      const { msg } = body;
+      expect(msg).toBe("Article ID Not Found");
+    });
+  });
+  test("Receives error 400 bad request when given an incorrect article id number", () => {
     return request(app)
-    .get("/api/articles?topic=paper")
-    .expect(200)
+    .get("/api/articles/dennis")
+    .expect(400)
     .then(({ body }) => {
-      const { articleData } = body;
-      expect(articleData.length).toBe(0)
-    })
-  })
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
+  });
 });
+  
