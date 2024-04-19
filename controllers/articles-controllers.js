@@ -48,7 +48,7 @@ exports.patchArticleById = (req, res, next) => {
   const { inc_votes } = req.body;
   patchVotes(article_id, inc_votes)
     .then((articleData) => {
-      res.status(202).send({ articleData });
+      res.status(200).send({ articleData });
     })
     .catch(next);
 };

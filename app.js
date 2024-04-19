@@ -13,6 +13,7 @@ const {
   patchArticleById,
   deleteCommendById,
 } = require("./controllers/articles-controllers");
+const { sendUserData } = require("./controllers/users-controllers");
 
 app.get("/api/topics", sendTopicData);
 
@@ -24,7 +25,9 @@ app.get("/api/articles", sendArticleData);
 
 app.get("/api/articles/:article_id/comments", sendCommentsByArticleId);
 
-app.use(express.json())
+app.get("/api/users", sendUserData);
+
+app.use(express.json());
 
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
 

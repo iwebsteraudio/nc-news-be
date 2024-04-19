@@ -74,5 +74,16 @@
     "exampleResponse":{
       "status code ": 204
     }
+  },
+  "GET /api/users": {
+      "description": "serves an array of all USERS",
+      "queries": [],
+      "exampleResponse": {
+        "users": [{ "username": "butter_bridge",
+                    "name": "jonny",
+                    "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+                     }]
+      }
   }
+  
 }
