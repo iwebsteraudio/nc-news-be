@@ -67,5 +67,12 @@
     "exampleResponse":{
       "votes": "any.Number"
     }
+  },
+  "DELETE /api/articles/comments/:commend_id":{
+    "description": "deletes comment by comment id",
+    "queries": ["id"],
+    "exampleResponse":{
+      "status code ": 204
+    }
   }
 }

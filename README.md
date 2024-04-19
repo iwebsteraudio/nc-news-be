@@ -18,3 +18,4 @@ npm i
 6. GET Comment by Article ID: "Responds with an array of comments for the given article_id"
 7. Posts a comment to a given article_id and responds with that comment
 8. Patch request to increase the number of votes on an article
+9. Delete comment by comment id
