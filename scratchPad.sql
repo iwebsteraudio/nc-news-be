@@ -8,9 +8,12 @@
 
 
 --psql -f scratchPad.sql > output.txt
+SELECT * FROM comments
 
+DELETE $1
+FROM comments
+WHERE comment_id = 1;
 
-SELECT * FROM articles;
 -- SELECT articles.article_id
 -- FROM articles
 -- LEFT JOIN comments ON comments.article_id = articles.article_id

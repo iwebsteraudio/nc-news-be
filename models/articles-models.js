@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-const fetchArticleById = (article_id) => {
+exports.fetchArticleById = (article_id) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
     .then(({ rows }) => {
@@ -11,7 +11,7 @@ const fetchArticleById = (article_id) => {
     });
 };
 
-const fetchArticleData = () => {
+exports.fetchArticleData = () => {
     
   return db.query(
     `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id) AS comment_count
@@ -24,7 +24,7 @@ const fetchArticleData = () => {
   });
 };
 
-const fetchCommentData = (article_id) => {
+exports.fetchCommentData = (article_id) => {
   return db.query(
     `SELECT * 
     FROM comments WHERE article_id = ${article_id}
@@ -34,7 +34,7 @@ const fetchCommentData = (article_id) => {
   })
 }
 
-const postCommentData = (article_id, user_name, body) => {
+exports.postCommentData = (article_id, user_name, body) => {
     return db.query(
     `INSERT INTO comments
     (article_id, author, body)
@@ -46,7 +46,7 @@ const postCommentData = (article_id, user_name, body) => {
   })
 }
 
-const patchVotes = (article_id, inc_votes) => {
+exports.patchVotes = (article_id, inc_votes) => {
   return db.query(
     `UPDATE articles
     SET
@@ -58,4 +58,10 @@ const patchVotes = (article_id, inc_votes) => {
   })
 }
 
-module.exports = { fetchArticleById, fetchArticleData, fetchCommentData, postCommentData, patchVotes };
+exports.removeCommentById = (comment_id) =>{
+
+  return db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`,[comment_id])
+  .then((result)=>{
+    return result.rows;
+  })
+}

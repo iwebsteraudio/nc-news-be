@@ -11,6 +11,7 @@ const {
   sendCommentsByArticleId,
   postCommentsByArticleId,
   patchArticleById,
+  deleteCommendById,
 } = require("./controllers/articles-controllers");
 
 app.get("/api/topics", sendTopicData);
@@ -28,6 +29,8 @@ app.use(express.json())
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
 
 app.patch("/api/articles/:article_id", patchArticleById)
+
+app.delete("/api/comments/:comment_id", deleteCommendById)
 
 app.all("*", sendCustom404);
 

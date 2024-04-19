@@ -258,15 +258,37 @@ describe("PATCH - Increases votes by article_id", () => {
         });
       });
   });
-  test("When given a patch request with an incorrect data type to increase votes (a string for example), responds with 400, bad request",()=>{
+  test("When given a patch request with an incorrect data type to increase votes (a string for example), responds with 400, bad request", () => {
     return request(app)
-  .patch("/api/articles/2")
-  .expect(400)
-  .send({ inc_votes: "vegetables"})
-  .then(({ body }) => {
-    const { msg } = body;
-    expect(msg).toBe("Bad Request")
+      .patch("/api/articles/2")
+      .expect(400)
+      .send({ inc_votes: "vegetables" })
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+describe("DELETE comment by comment id", () => {
+  test("When given a delete request and a comment_id, deletes that comment", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("When given a delete request for a comment id which doesn't exist, returns 40 Not Found",()=>{
+    return request(app)
+    .delete("/api/comments/9999")
+    .expect(404)
+    .then(({body})=>{
+      const { msg } = body;
+      expect(msg).toBe('comment not found')
+    })
   })
-
-})
+  test("When given an invalid id, returns 400, Bad Request",()=>{
+    return request(app)
+    .delete("/api/comments/NaN")
+    .expect(400)
+    .then(({body})=>{
+      const { msg } = body;
+      expect(msg).toBe('Bad Request')
+    })
+  })
 });
