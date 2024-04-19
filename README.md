@@ -21,3 +21,4 @@ npm i
 9. Delete comment by comment id
 10. GET Api users: "Gets all users"
 11. GET api articles topic query: "filters the articles by the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles"
+12. GET Api articles by :article_id (comment_count): "article response object should also now include comment_count"
