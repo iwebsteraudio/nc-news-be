@@ -7,6 +7,10 @@ const {
   removeCommentById,
 } = require("../models/articles-models");
 
+const { 
+  checkIfTopic,
+} = require("../models/topics-models")
+
 exports.sendArticleById = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticleById(article_id)
@@ -17,9 +21,11 @@ exports.sendArticleById = (req, res, next) => {
 };
 
 exports.sendArticleData = (req, res, next) => {
-  fetchArticleData()
-    .then((articleData) => {
-      res.status(200).send({ articleData });
+  
+  const { topic } = req.query;
+  Promise.all([fetchArticleData(topic), checkIfTopic(topic)])
+    .then((resolvedPromises) => {
+      res.status(200).send( { articleData: resolvedPromises[0] } );
     })
     .catch(next);
 };
@@ -56,14 +62,8 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteCommendById = (req, res, next) => {
   const { comment_id } = req.params;
   removeCommentById(comment_id)
-    .then((commentData) => {
-      if(commentData.length === 0){
-        return Promise.reject({
-          status: 404,
-          msg: 'comment not found'
-        })
-      }
-      res.status(204).send({ commentData });
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };

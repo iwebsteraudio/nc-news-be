@@ -8,7 +8,8 @@
 
 
 --psql -f scratchPad.sql > output.txt
-SELECT * FROM users
+SELECT * FROM articles;
+SELECT * FROM topics;
 
 -- DELETE $1
 -- FROM comments
