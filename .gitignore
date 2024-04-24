@@ -1,5 +1,3 @@
 node_modules
 .env.*
-scratchPad.js
 *.txt
-scratchPad.sql
