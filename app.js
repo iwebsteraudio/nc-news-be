@@ -16,6 +16,8 @@ const {
 const { sendUserData } = require("./controllers/users-controllers");
 const cors = require('cors');
 
+app.use(cors());
+
 app.get("/api/topics", sendTopicData);
 
 app.get("/api/", sendApiData);
@@ -38,7 +40,7 @@ app.delete("/api/comments/:comment_id", deleteCommendById)
 
 app.all("*", sendCustom404);
 
-app.use(cors(),(err, req, res, next) => {
+app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
   }
