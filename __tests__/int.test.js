@@ -35,6 +35,7 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
 describe("GET /api/", () => {
   test("When requesting the API, simply responds with the details of the various endpoints", () => {
     return request(app)
@@ -85,6 +86,7 @@ describe("GET Article by ID", () => {
       });
   });
 });
+
 describe("GET API Articles", () => {
   test("Returns status 200 and all articles when requested", () => {
     return request(app)
@@ -149,6 +151,7 @@ describe("GET API Articles", () => {
       });
   });
 });
+
 describe("GET Comments by Article ID", () => {
   test("Returns a status 200 and an array containing comment objects when requested by article ID", () => {
     return request(app)
