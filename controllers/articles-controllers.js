@@ -1,5 +1,7 @@
+const articles = require("../db/data/test-data/articles");
 const {
   fetchArticleById,
+  fetchArticleByTopic,
   fetchArticleData,
   fetchCommentData,
   postCommentData,
@@ -26,6 +28,18 @@ exports.sendArticleData = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.sendArticleByTopic = (req, res, next) =>{
+  const {topic} = req.params;
+  fetchArticleByTopic(topic)
+  .then((articleData)=>{
+    if (articleData.length === 0){
+      return Promise.reject({status: 404, msg: "Not Found"})
+    }
+    res.status(200).send({ articleData })
+  })
+  .catch(next);
+}
 
 exports.sendCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;

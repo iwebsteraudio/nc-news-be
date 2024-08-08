@@ -39,6 +39,18 @@ exports.fetchArticleData = (query) => {
   });
 };
 
+exports.fetchArticleByTopic = (topic) => {
+  console.log("HI")
+  return db
+    .query(
+      `SELECT * FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE topic = $1;`,
+      [topic]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.fetchCommentData = (article_id) => {
   return db
     .query(
@@ -67,7 +79,6 @@ exports.postCommentData = (article_id, user_name, body) => {
 };
 
 exports.patchVotes = (article_id, inc_votes) => {
-  
   return db
     .query(
       `UPDATE articles

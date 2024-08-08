@@ -401,7 +401,7 @@ describe("GET API Articles by id Comment count", () => {
       });
   });
 });
-describe.only("GET user by username", () => {
+describe("GET user by username", () => {
   test("When given a request for a user profile by username, responds with user object", () => {
     return request(app)
       .get("/api/users/lurker")
@@ -423,6 +423,25 @@ describe.only("GET user by username", () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe("User Not Found");
+      });
+  });
+});
+describe("GET articles by topic", () => {
+  test("When given a request for all articles by topic, responds with all articles by topic", () => {
+    return request(app)
+      .get("/api/articles/topics/cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect.objectContaining({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: "cats",
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        })
       });
   });
 });
