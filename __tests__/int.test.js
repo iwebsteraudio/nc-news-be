@@ -401,3 +401,28 @@ describe("GET API Articles by id Comment count", () => {
       });
   });
 });
+describe.only("GET user by username", () => {
+  test("When given a request for a user profile by username, responds with user object", () => {
+    return request(app)
+      .get("/api/users/lurker")
+      .expect(200)
+      .then(({ body }) => {
+        const { userData } = body;
+        expect(userData).toMatchObject({
+          username: "lurker",
+          name: "do_nothing",
+          avatar_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        });
+      });
+  });
+  test("When given a request for a non-existent user, returns 404 not found", () => {
+    return request(app)
+      .get("/api/users/tomflippantname")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("User Not Found");
+      });
+  });
+});
