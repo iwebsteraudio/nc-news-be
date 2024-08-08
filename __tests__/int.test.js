@@ -270,7 +270,7 @@ describe("PATCH - Increases votes by article_id", () => {
         expect(msg).toBe("Bad Request");
       });
   });
-  test.only("When given a patch request for an invalid or non-existant article id, returns 400, bad request", () => {
+  test("When given a patch request for an invalid or non-existant article id, returns 400, bad request", () => {
     return request(app)
       .patch("/api/articles/1000000000000000")
       .expect(400)
