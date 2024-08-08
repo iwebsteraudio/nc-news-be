@@ -27,7 +27,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an article object",
-    "queries": ["id"],
+    "queries": [],
     "exampleResponse": {
       "title": "Living in the shadow of a great man",
       "topic": "mitch",
@@ -50,7 +50,7 @@
       "article_id": "9"
     }
   },
-  "POST /api/articles/:article_id/comments":{
+  "POST /api/articles/:article_id/comments": {
     "description": "Posts a comment to a given article_id and responds with that comment",
     "queries": ["id"],
     "exampleResponse": {
@@ -58,32 +58,34 @@
       "created_at": "any.String",
       "author": "user_name",
       "body": "This is a test comment",
-      "article_id":  "article_id"
+      "article_id": "article_id"
     }
   },
-  "PATCH /api/articles/:article_id":{
+  "PATCH /api/articles/:article_id": {
     "description": "increases the number of votes on an article",
     "queries": ["id"],
-    "exampleResponse":{
+    "exampleResponse": {
       "votes": "any.Number"
     }
   },
-  "DELETE /api/articles/comments/:commend_id":{
+  "DELETE /api/articles/comments/:commend_id": {
     "description": "deletes comment by comment id",
     "queries": ["id"],
-    "exampleResponse":{
+    "exampleResponse": {
       "status code ": 204
     }
   },
   "GET /api/users": {
-      "description": "serves an array of all USERS",
-      "queries": [],
-      "exampleResponse": {
-        "users": [{ "username": "butter_bridge",
-                    "name": "jonny",
-                    "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-                     }]
-      }
+    "description": "serves an array of all USERS",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
   }
-  
 }

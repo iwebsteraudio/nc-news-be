@@ -14,7 +14,7 @@ const {
   deleteCommendById,
 } = require("./controllers/articles-controllers");
 const { sendUserData } = require("./controllers/users-controllers");
-const cors = require('cors');
+const cors = require("cors");
 
 app.use(cors());
 
@@ -34,17 +34,21 @@ app.use(express.json());
 
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
 
-app.patch("/api/articles/:article_id", patchArticleById)
+app.patch("/api/articles/:article_id", patchArticleById);
 
-app.delete("/api/comments/:comment_id", deleteCommendById)
+app.delete("/api/comments/:comment_id", deleteCommendById);
 
 app.all("*", sendCustom404);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ msg: err.msg });
-  }
-  else if (err.code === "22P02" || err.code === "42703" || err.code==="23503") {
+  } else if (
+    err.code === "22P02" ||
+    err.code === "42703" ||
+    err.code === "23503" ||
+    err.code === "22003"
+  ) {
     res.status(400).send({ msg: "Bad Request" });
   }
 });

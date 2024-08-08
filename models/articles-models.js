@@ -1,22 +1,22 @@
 const db = require("../db/connection");
 
 exports.fetchArticleById = (article_id) => {
-  
   return db
     .query(
-    `SELECT articles.*,
+      `SELECT articles.*,
     COUNT(comment_id) AS comment_count
     FROM articles 
     LEFT JOIN comments ON comments.article_id = articles.article_id 
     WHERE articles.article_id = $1
-    GROUP BY articles.article_id;`, [article_id])
+    GROUP BY articles.article_id;`,
+      [article_id]
+    )
     .then(({ rows }) => {
       if (rows.length > 0) {
-        
         return rows[0];
       }
       return Promise.reject({ status: 404, msg: "Article ID Not Found" });
-    })
+    });
 };
 
 exports.fetchArticleData = (query) => {
@@ -44,7 +44,8 @@ exports.fetchCommentData = (article_id) => {
     .query(
       `SELECT * 
     FROM comments WHERE article_id = $1
-    ORDER BY created_at DESC;`, [article_id]
+    ORDER BY created_at DESC;`,
+      [article_id]
     )
     .then(({ rows }) => {
       return rows;
@@ -66,6 +67,7 @@ exports.postCommentData = (article_id, user_name, body) => {
 };
 
 exports.patchVotes = (article_id, inc_votes) => {
+  
   return db
     .query(
       `UPDATE articles

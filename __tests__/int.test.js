@@ -270,6 +270,16 @@ describe("PATCH - Increases votes by article_id", () => {
         expect(msg).toBe("Bad Request");
       });
   });
+  test.only("When given a patch request for an invalid or non-existant article id, returns 400, bad request", () => {
+    return request(app)
+      .patch("/api/articles/1000000000000000")
+      .expect(400)
+      .send({ inc_votes: 1 })
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
 });
 describe("DELETE comment by comment id", () => {
   test("When given a delete request and a comment_id, deletes that comment", () => {
@@ -360,27 +370,26 @@ describe("GET API Articles by id Comment count", () => {
       .then(({ body }) => {
         const { article } = body;
         expect.objectContaining({
-          comment_count: "11"
+          comment_count: "11",
         });
       });
   });
   test("Receives error 404 not found when given an incorrect article id number", () => {
     return request(app)
-    .get("/api/articles/100")
-    .expect(404)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Article ID Not Found");
-    });
+      .get("/api/articles/100")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Article ID Not Found");
+      });
   });
   test("Receives error 400 bad request when given an incorrect article id number", () => {
     return request(app)
-    .get("/api/articles/dennis")
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Bad Request");
-    });
+      .get("/api/articles/dennis")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
   });
 });
-  
