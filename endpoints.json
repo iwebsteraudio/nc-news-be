@@ -64,7 +64,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "increases the number of votes on an article",
     "queries": [],
-    "exampleRequestBody":{
+    "exampleRequestBody": {
       "created_at": "any.String",
       "author": "user_name",
       "body": "This is a test comment",
@@ -97,6 +97,15 @@
           "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
         }
       ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves a single user",
+    "queries": ["username"],
+    "exampleRequestBody": {
+      "username": "lurker",
+      "name": "do_nothing",
+      "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
     }
   }
 }
