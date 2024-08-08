@@ -63,9 +63,20 @@
   },
   "PATCH /api/articles/:article_id": {
     "description": "increases the number of votes on an article",
-    "queries": ["id"],
+    "queries": [],
+    "exampleRequestBody":{
+      "created_at": "any.String",
+      "author": "user_name",
+      "body": "This is a test comment",
+      "article_id": "article_id",
+      "votes": "100"
+    },
     "exampleResponse": {
-      "votes": "any.Number"
+      "created_at": "any.String",
+      "author": "user_name",
+      "body": "This is a test comment",
+      "article_id": "article_id",
+      "votes": "101"
     }
   },
   "DELETE /api/articles/comments/:commend_id": {

@@ -1,44 +1,19 @@
 const express = require("express");
 const app = express();
-const {
-  sendTopicData,
-  sendCustom404,
-  sendApiData,
-} = require("./controllers/topics-controllers");
-const {
-  sendArticleById,
-  sendArticleData,
-  sendCommentsByArticleId,
-  postCommentsByArticleId,
-  patchArticleById,
-  deleteCommendById,
-} = require("./controllers/articles-controllers");
-const { sendUserData } = require("./controllers/users-controllers");
+
 const cors = require("cors");
+
+const apiRouter = require("./routes/api-router");
 
 app.use(cors());
 
-app.get("/api/topics", sendTopicData);
-
-app.get("/api/", sendApiData);
-
-app.get("/api/articles/:article_id", sendArticleById);
-
-app.get("/api/articles", sendArticleData);
-
-app.get("/api/articles/:article_id/comments", sendCommentsByArticleId);
-
-app.get("/api/users", sendUserData);
-
 app.use(express.json());
 
-app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
+app.use("/api", apiRouter);
 
-app.patch("/api/articles/:article_id", patchArticleById);
-
-app.delete("/api/comments/:comment_id", deleteCommendById);
-
-app.all("*", sendCustom404);
+app.all("*", (req, res, next) => {
+  res.status(404).send({ msg: "Not Found" });
+});
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {

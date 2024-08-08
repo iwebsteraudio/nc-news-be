@@ -7,9 +7,7 @@ const {
   removeCommentById,
 } = require("../models/articles-models");
 
-const { 
-  checkIfTopic,
-} = require("../models/topics-models")
+const { checkIfTopic } = require("../models/topics-models");
 
 exports.sendArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -21,11 +19,10 @@ exports.sendArticleById = (req, res, next) => {
 };
 
 exports.sendArticleData = (req, res, next) => {
-  
   const { topic } = req.query;
   Promise.all([fetchArticleData(topic), checkIfTopic(topic)])
     .then((resolvedPromises) => {
-      res.status(200).send( { articleData: resolvedPromises[0] } );
+      res.status(200).send({ articleData: resolvedPromises[0] });
     })
     .catch(next);
 };
@@ -58,12 +55,11 @@ exports.patchArticleById = (req, res, next) => {
     })
     .catch(next);
 };
-
-exports.deleteCommendById = (req, res, next) => {
+exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
   removeCommentById(comment_id)
-    .then(() => {
-      res.status(204).send();
-    })
-    .catch(next);
+  .then(() => {
+    res.status(204).send();
+  })
+  .catch(next);
 };
