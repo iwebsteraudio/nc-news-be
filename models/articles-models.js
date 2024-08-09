@@ -43,7 +43,7 @@ exports.fetchArticleByTopic = (topic) => {
   console.log("HI")
   return db
     .query(
-      `SELECT * FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE topic = $1;`,
+      `SELECT * FROM articles WHERE topic = $1;`,
       [topic]
     )
     .then(({ rows }) => {
