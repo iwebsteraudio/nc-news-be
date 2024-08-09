@@ -21,31 +21,38 @@ exports.fetchArticleById = (article_id) => {
 
 exports.fetchArticleData = (query) => {
   const queryStringArray = [];
-  let queryString = `SELECT articles.article_id, articles.title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url,
-  COUNT(comment_id) AS comment_count
-  FROM articles
-  LEFT JOIN comments ON comments.article_id = articles.article_id `;
 
-  if (query) {
-    queryString += `WHERE topic = $1`;
-    queryStringArray.push(query);
+  let queryString = `SELECT articles.article_id, articles.title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url,
+  COUNT(comment_id)::int AS comment_count
+  FROM articles
+  LEFT JOIN comments ON comments.article_id = articles.article_id`;
+
+  if (query.slug) {
+    queryString += ` WHERE topic = $1`;
+    queryStringArray.push(query.slug);
   }
 
-  queryString += ` GROUP BY articles.article_id
-                  ORDER BY articles.created_at DESC;`;
+  queryString += ` GROUP BY articles.article_id`;
 
-  return db.query(queryString, queryStringArray).then(({ rows }) => {
-    return rows;
-  });
+  if (query.sort_by) {
+    queryString += ` ORDER BY ${query.sort_by} DESC;`;
+  } else {
+    queryString += ` ORDER BY articles.created_at DESC;`;
+  }
+
+  return db
+    .query(queryString, queryStringArray)
+    .then(({ rows }) => {
+      return rows;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.fetchArticleByTopic = (topic) => {
-  console.log("HI")
   return db
-    .query(
-      `SELECT * FROM articles WHERE topic = $1;`,
-      [topic]
-    )
+    .query(`SELECT * FROM articles WHERE topic = $1;`, [topic])
     .then(({ rows }) => {
       return rows;
     });

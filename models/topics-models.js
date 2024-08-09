@@ -13,16 +13,9 @@ exports.fetchTopics = () => {
 };
 
 exports.checkIfTopic = (topic) => {
-  if (topic) {
-    return db
-      .query(`SELECT * FROM topics WHERE slug = $1;`, [topic])
-      .then(({ rows }) => {
-        if (rows.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: "Not Found",
-          });
-        }
-      });
-  }
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1;`, [topic])
+    .then(({ rows }) => {
+      return rows.length > 0;
+    });
 };

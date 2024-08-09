@@ -136,20 +136,31 @@ describe("GET API Articles", () => {
           descending: true,
         });
       });
-  });
-  test("Returns the articles including comment count", () => {
-    return request(app)
+    });
+    test("Returns the articles including comment count", () => {
+      return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         const { articleData } = body;
         articleData.forEach((article) => {
           expect(article).toEqual(
-            expect.objectContaining({ comment_count: expect.any(String) })
+            expect.objectContaining({ comment_count: expect.any(Number) })
           );
         });
       });
-  });
+    });
+    test("When given a sort_by query for comment_count, returns all articles sorted by most comments",()=>{
+      return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({body}) => {
+        const {articleData} = body;
+        expect(articleData).toBeSortedBy("comment_count", {
+        descending: true,
+      })
+    })
+  })
 });
 
 describe("GET Comments by Article ID", () => {

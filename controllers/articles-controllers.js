@@ -21,25 +21,45 @@ exports.sendArticleById = (req, res, next) => {
 };
 
 exports.sendArticleData = (req, res, next) => {
-  const { topic } = req.query;
-  Promise.all([fetchArticleData(topic), checkIfTopic(topic)])
-    .then((resolvedPromises) => {
-      res.status(200).send({ articleData: resolvedPromises[0] });
+  const query = req.query;
+
+  if (query.topic) {
+    checkIfTopic(query.topic)
+      .then((topicExists) => {
+        if (topicExists) {
+          return fetchArticleData({ slug: query.topic, sort_by: query.sort_by });
+        } else {
+          return Promise.reject({
+            status: 404,
+            msg: "Not Found",
+          });
+        }
+      })
+      .then((articleData) => {
+        res.status(200).send({ articleData });
+      })
+      .catch(next);
+  } else {
+    fetchArticleData(query)
+      .then((articleData) => {
+        res.status(200).send({ articleData });
+      })
+      .catch(next);
+  }
+};
+
+
+exports.sendArticleByTopic = (req, res, next) => {
+  const { topic } = req.params;
+  fetchArticleByTopic(topic)
+    .then((articleData) => {
+      if (articleData.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+      res.status(200).send({ articleData });
     })
     .catch(next);
 };
-
-exports.sendArticleByTopic = (req, res, next) =>{
-  const {topic} = req.params;
-  fetchArticleByTopic(topic)
-  .then((articleData)=>{
-    if (articleData.length === 0){
-      return Promise.reject({status: 404, msg: "Not Found"})
-    }
-    res.status(200).send({ articleData })
-  })
-  .catch(next);
-}
 
 exports.sendCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
@@ -72,8 +92,8 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
   removeCommentById(comment_id)
-  .then(() => {
-    res.status(204).send();
-  })
-  .catch(next);
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
 };
