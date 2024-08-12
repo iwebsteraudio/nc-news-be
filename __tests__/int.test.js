@@ -326,7 +326,7 @@ describe("DELETE comment by comment id", () => {
 describe("GET API Users", () => {
   test("Should return status 200 and an array containing all user objects", () => {
     return request(app)
-      .get("/api/users")
+      .get("/api/users/")
       .expect(200)
       .then(({ body }) => {
         const { userData } = body;
