@@ -1,4 +1,3 @@
-const articles = require("../db/data/test-data/articles");
 const {
   fetchArticleById,
   fetchArticleByTopic,
@@ -97,3 +96,4 @@ exports.deleteCommentById = (req, res, next) => {
     })
     .catch(next);
 };
+

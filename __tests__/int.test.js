@@ -136,9 +136,9 @@ describe("GET API Articles", () => {
           descending: true,
         });
       });
-    });
-    test("Returns the articles including comment count", () => {
-      return request(app)
+  });
+  test("Returns the articles including comment count", () => {
+    return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
@@ -149,18 +149,18 @@ describe("GET API Articles", () => {
           );
         });
       });
-    });
-    test("When given a sort_by query for comment_count, returns all articles sorted by most comments",()=>{
-      return request(app)
+  });
+  test("When given a sort_by query for comment_count, returns all articles sorted by most comments", () => {
+    return request(app)
       .get("/api/articles?sort_by=comment_count")
       .expect(200)
-      .then(({body}) => {
-        const {articleData} = body;
+      .then(({ body }) => {
+        const { articleData } = body;
         expect(articleData).toBeSortedBy("comment_count", {
-        descending: true,
-      })
-    })
-  })
+          descending: true,
+        });
+      });
+  });
 });
 
 describe("GET Comments by Article ID", () => {
@@ -323,6 +323,55 @@ describe("DELETE comment by comment id", () => {
       });
   });
 });
+describe("PATCH - Increase votes by comment_id", () => {
+  test("When given a request body with a key of inc_votes and an INT, updates the vote count and returns the updated comment with increased vote count", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .expect(200)
+      .send({ inc_votes: 1 })
+      .then(({ body }) => {
+        const { commentData } = body;
+        expect(commentData).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 17,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+  test("When given a request body with a key of inc_votes and a String, returns 400, bad request", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .expect(400)
+      .send({ inc_votes: "dennis" })
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("When given a request body with a key of inc_votes and a String, but comment_id is incorrect data, returns 400, Bad Request",()=>{
+    return request(app)
+    .patch("/api/comments/vegetables")
+    .expect(400)
+    .send({inc_votes: 1})
+    .then(({body})=>{
+      const {msg} = body;
+      expect(msg).toBe("Bad Request")
+    })
+  })
+  test("When given a request body with a key of inc_votes and a String, but comment_id doesn't exist , returns 404, Not Found",()=>{
+    return request(app)
+    .patch("/api/comments/1000000000")
+    .expect(404)
+    .send({inc_votes: 1})
+    .then(({body})=>{
+      console.log(body)
+      const {msg} = body;
+      expect(msg).toBe("comment not found")
+    })
+  })
+});
 describe("GET API Users", () => {
   test("Should return status 200 and an array containing all user objects", () => {
     return request(app)
@@ -452,7 +501,7 @@ describe("GET articles by topic", () => {
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
-        })
+        });
       });
   });
 });
