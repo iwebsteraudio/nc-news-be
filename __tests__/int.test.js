@@ -565,3 +565,15 @@ describe("POST new article", () => {
       });
   });
 });
+describe.only("GET API Articles, limited by query",()=>{
+  test("When GET request made for articles, with pagination limits set in query, responds with that number of articles",()=>{
+    return request(app)
+    .get("/api/articles?limit=10")
+    .expect(200)
+    .then(({ body })=>{
+      const {articleData} = body;
+      console.log(articleData)
+      expect(articleData.length).toBe(10)
+    })
+  })
+})
