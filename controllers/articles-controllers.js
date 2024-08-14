@@ -6,6 +6,7 @@ const {
   postCommentData,
   patchVotes,
   removeCommentById,
+  postArticleData,
 } = require("../models/articles-models");
 
 const { checkIfTopic } = require("../models/topics-models");
@@ -26,7 +27,10 @@ exports.sendArticleData = (req, res, next) => {
     checkIfTopic(query.topic)
       .then((topicExists) => {
         if (topicExists) {
-          return fetchArticleData({ slug: query.topic, sort_by: query.sort_by });
+          return fetchArticleData({
+            slug: query.topic,
+            sort_by: query.sort_by,
+          });
         } else {
           return Promise.reject({
             status: 404,
@@ -46,7 +50,6 @@ exports.sendArticleData = (req, res, next) => {
       .catch(next);
   }
 };
-
 
 exports.sendArticleByTopic = (req, res, next) => {
   const { topic } = req.params;
@@ -96,4 +99,10 @@ exports.deleteCommentById = (req, res, next) => {
     })
     .catch(next);
 };
-
+exports.postNewArticle = (req, res, next) => {
+  postArticleData(req.body)
+    .then((articleData) => {
+      res.status(201).send({ articleData });
+    })
+    .catch(next);
+};

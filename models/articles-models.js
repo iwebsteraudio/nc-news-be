@@ -123,3 +123,29 @@ exports.removeCommentById = (comment_id) => {
       return result.rows;
     });
 };
+
+exports.postArticleData = (params) => {
+  if (params.title === null || params.body === null || params.topic === null) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+  return db
+    .query(
+      `INSERT INTO articles
+    (title, author, topic, body, article_img_url)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;`,
+      [
+        params.title,
+        params.author,
+        params.topic,
+        params.body,
+        params.article_img_url,
+      ]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};

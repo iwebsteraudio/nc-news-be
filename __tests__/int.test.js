@@ -350,27 +350,26 @@ describe("PATCH - Increase votes by comment_id", () => {
         expect(msg).toBe("Bad Request");
       });
   });
-  test("When given a request body with a key of inc_votes and a String, but comment_id is incorrect data, returns 400, Bad Request",()=>{
+  test("When given a request body with a key of inc_votes and a String, but comment_id is incorrect data, returns 400, Bad Request", () => {
     return request(app)
-    .patch("/api/comments/vegetables")
-    .expect(400)
-    .send({inc_votes: 1})
-    .then(({body})=>{
-      const {msg} = body;
-      expect(msg).toBe("Bad Request")
-    })
-  })
-  test("When given a request body with a key of inc_votes and a String, but comment_id doesn't exist , returns 404, Not Found",()=>{
+      .patch("/api/comments/vegetables")
+      .expect(400)
+      .send({ inc_votes: 1 })
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("When given a request body with a key of inc_votes and a String, but comment_id doesn't exist , returns 404, Not Found", () => {
     return request(app)
-    .patch("/api/comments/1000000000")
-    .expect(404)
-    .send({inc_votes: 1})
-    .then(({body})=>{
-      console.log(body)
-      const {msg} = body;
-      expect(msg).toBe("comment not found")
-    })
-  })
+      .patch("/api/comments/1000000000")
+      .expect(404)
+      .send({ inc_votes: 1 })
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("comment not found");
+      });
+  });
 });
 describe("GET API Users", () => {
   test("Should return status 200 and an array containing all user objects", () => {
@@ -502,6 +501,67 @@ describe("GET articles by topic", () => {
           votes: expect.any(Number),
           article_img_url: expect.any(String),
         });
+      });
+  });
+});
+describe("POST new article", () => {
+  test("When a user posts a new article, returns an object containing article, article_id, topic, votes, comments and user", () => {
+    return request(app)
+      .post("/api/articles/")
+      .send({
+        author: "lurker",
+        title: "Eddie is a good boy",
+        body: "A very good boy, indeed. He is, however, a non-cat",
+        article_img_url: "https://i.imgur.com/jsvTeiP.jpeg",
+        topic: "cats",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData).toMatchObject({
+          article_id: expect.any(Number),
+          title: "Eddie is a good boy",
+          author: "lurker",
+          topic: "cats",
+          body: "A very good boy, indeed. He is, however, a non-cat",
+          votes: 0,
+          article_img_url: "https://i.imgur.com/jsvTeiP.jpeg",
+        });
+        expect(new Date(articleData.created_at).toString()).not.toBe(
+          "Invalid Date"
+        );
+      });
+  });
+  test("When a user posts a new article with no body, returns error", () => {
+    return request(app)
+      .post("/api/articles/")
+      .send({
+        author: "lurker",
+        title: "Mr No Body",
+        body: null,
+        article_img_url: null,
+        topic: "cooking",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("When a user posts a new article with an non-existent topic, returns error", () => {
+    return request(app)
+      .post("/api/articles/")
+      .send({
+        author: "lurker",
+        title: "Caaats. What arre thheyy?",
+        body: "I'm affrraaid this is going to faaaail",
+        article_img_url: null,
+        topic: "crats",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
       });
   });
 });

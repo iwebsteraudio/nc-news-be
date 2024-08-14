@@ -6,17 +6,17 @@ const {
   postCommentsByArticleId,
   patchArticleById,
   sendArticleByTopic,
+  postNewArticle,
 } = require("../controllers/articles-controllers");
 
-articleRouter.route("/").get(sendArticleData);
+articleRouter.route("/").get(sendArticleData).post(postNewArticle);
 
 articleRouter
   .route("/:article_id")
   .get(sendArticleById)
   .patch(patchArticleById);
 
-articleRouter.route("/topics/:topic")
-  .get(sendArticleByTopic);
+articleRouter.route("/topics/:topic").get(sendArticleByTopic);
 
 articleRouter
   .route("/:article_id/comments")
