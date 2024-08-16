@@ -565,15 +565,40 @@ describe("POST new article", () => {
       });
   });
 });
-describe.only("GET API Articles, limited by query",()=>{
-  test("When GET request made for articles, with pagination limits set in query, responds with that number of articles",()=>{
+describe("GET API Articles, limited by query", () => {
+  test("When GET request made for articles, with pagination limits set in query, responds with that number of articles", () => {
     return request(app)
-    .get("/api/articles?limit=10")
-    .expect(200)
-    .then(({ body })=>{
-      const {articleData} = body;
-      console.log(articleData)
-      expect(articleData.length).toBe(10)
-    })
-  })
-})
+      .get("/api/articles?limit=10")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData.length).toBe(10);
+      });
+  });
+  test("When GET request made for articles, with pagination limits set in query, AND p specified as 1, returns page 2 of test articles", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { articleData } = body;
+        expect(articleData.length).toBe(3);
+      });
+  });
+  test("When GET request made for articles, with pagination query set as incorrect data format, gives 400, bad request", () => {
+    return request(app)
+      .get("/api/articles?limit=dennis")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("When GET request made for articles, with pagination query set to a later page than exists, gives 404, not found", () => {
+    return request(app)
+    .get("/api/articles?limit=10&p=4")
+    .expect(404).then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Not Found")
+    });
+  });
+});

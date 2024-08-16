@@ -47,7 +47,7 @@ exports.fetchArticleData = (query) => {
     queryString += ` LIMIT ${query.limit}`;
   }
   if (query.p) {
-    queryString += ` OFFSET ${query.limit} * ${p - 1}`;
+    queryString += ` OFFSET ${query.limit} * ${query.p - 1}`;
   }
 
   queryString += `;`;

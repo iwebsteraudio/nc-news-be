@@ -23,6 +23,16 @@ exports.sendArticleById = (req, res, next) => {
 exports.sendArticleData = (req, res, next) => {
   const query = req.query;
 
+  if (
+    (query.limit && isNaN(parseInt(query.limit))) ||
+    (query.p && isNaN(parseInt(query.p)))
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    }).catch(next);
+  }
+
   if (query.topic) {
     checkIfTopic(query.topic)
       .then((topicExists) => {
@@ -39,13 +49,20 @@ exports.sendArticleData = (req, res, next) => {
         }
       })
       .then((articleData) => {
-        res.status(200).send({ articleData });
+          res.status(200).send({ articleData });
       })
       .catch(next);
   } else {
     fetchArticleData(query)
       .then((articleData) => {
-        res.status(200).send({ articleData });
+        if (articleData.length !== 0) {
+          res.status(200).send({ articleData });
+        } else {
+          Promise.reject({
+            status: 404,
+            msg: "Not Found",
+          }).catch(next);
+        }
       })
       .catch(next);
   }
