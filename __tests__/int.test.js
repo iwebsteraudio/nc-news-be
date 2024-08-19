@@ -642,7 +642,7 @@ describe("GET API Comments by Article ID, limited by query", () => {
       });
   });
 });
-describe.only("POST new topic",()=>{
+describe("POST new topic",()=>{
   test("When POST request made for a new topic, returns status 200 and a topic object",()=>{
     return request(app)
     .post(`/api/topics/`)
