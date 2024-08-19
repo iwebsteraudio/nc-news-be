@@ -93,7 +93,6 @@ queryString += ` OFFSET ${query.limit} * ${query.p - 1}`;
 }
 
 queryString += `;`;
-console.log(  queryString)
   return db
     .query(
       queryString,
