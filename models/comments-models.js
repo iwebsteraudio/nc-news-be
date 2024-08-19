@@ -1,9 +1,13 @@
 const db = require("../db/connection");
 
 exports.patchCommentVotes = (comment_id, inc_votes) => {
+  
   return db
     .query(
-      `UPDATE comments SET votes = votes + $2 WHERE comment_id = $1 RETURNING *;`,
+      `UPDATE comments
+      SET votes = votes + $2
+      WHERE comment_id = $1
+      RETURNING *;`,
       [comment_id, inc_votes]
     )
     .then(({ rows }) => {

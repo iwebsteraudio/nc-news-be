@@ -573,6 +573,7 @@ describe("GET API Articles, limited by query", () => {
       .then(({ body }) => {
         const { articleData } = body;
         expect(articleData.length).toBe(10);
+        expect(articleData[0].total_count).toBe("13");
       });
   });
   test("When GET request made for articles, with pagination limits set in query, AND p specified as 1, returns page 2 of test articles", () => {
@@ -595,10 +596,49 @@ describe("GET API Articles, limited by query", () => {
   });
   test("When GET request made for articles, with pagination query set to a later page than exists, gives 404, not found", () => {
     return request(app)
-    .get("/api/articles?limit=10&p=4")
-    .expect(404).then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Not Found")
-    });
+      .get("/api/articles?limit=10&p=4")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Not Found");
+      });
+  });
+});
+describe.only("GET API Comments by Article ID, limited by query", () => {
+  test("When GET request made for comments, with pagination limits set in query, responds with that number of comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10")
+      .expect(200)
+      .then(({ body }) => {
+        const { commentData } = body;
+        expect(commentData.length).toBe(10);
+      });
+  });
+  test("When GET request made for API Comments by Article ID, with pagination limits set in query, AND p specified as 1, returns page 2 of test comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { commentData } = body;
+        expect(commentData.length).toBe(1);
+      });
+  });
+  test("When GET request made for API Comments by Article ID, with pagination query set as incorrect data format, gives 400, bad request", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=dennis")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("When GET request made for API Comments by Article ID, with pagination query set to a later page than exists, gives 404, not found", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=4")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Not Found");
+      });
   });
 });

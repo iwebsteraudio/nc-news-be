@@ -4,7 +4,7 @@ exports.fetchArticleById = (article_id) => {
   return db
     .query(
       `SELECT articles.*,
-    COUNT(comment_id) AS comment_count
+    COUNT(comment_id)::int AS comment_count
     FROM articles 
     LEFT JOIN comments ON
     comments.article_id = articles.article_id 
@@ -26,6 +26,7 @@ exports.fetchArticleData = (query) => {
   const queryStringArray = [];
 
   let queryString = `SELECT articles.article_id, articles.title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url,
+  count(*) OVER() AS total_count,
   COUNT(comment_id)::int AS comment_count
   FROM articles
   LEFT JOIN comments
@@ -55,6 +56,7 @@ exports.fetchArticleData = (query) => {
   return db
     .query(queryString, queryStringArray)
     .then(({ rows }) => {
+      console.log(rows)
       return rows;
     })
     .catch((err) => {
@@ -78,15 +80,28 @@ exports.fetchArticleByTopic = (topic) => {
     });
 };
 
-exports.fetchCommentData = (article_id) => {
+exports.fetchCommentData = (article_id, query) => {
+  let queryString = `SELECT * 
+    FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC`;
+
+if (query.limit) {
+queryString += ` LIMIT ${query.limit}`;
+}
+if (query.p) {
+queryString += ` OFFSET ${query.limit} * ${query.p - 1}`;
+}
+
+queryString += `;`;
+console.log(  queryString)
   return db
     .query(
-      `SELECT * 
-    FROM comments WHERE article_id = $1
-    ORDER BY created_at DESC;`,
+      queryString,
       [article_id]
     )
     .then(({ rows }) => {
+  
       return rows;
     });
 };

@@ -49,7 +49,7 @@ exports.sendArticleData = (req, res, next) => {
         }
       })
       .then((articleData) => {
-          res.status(200).send({ articleData });
+        res.status(200).send({ articleData });
       })
       .catch(next);
   } else {
@@ -82,8 +82,12 @@ exports.sendArticleByTopic = (req, res, next) => {
 
 exports.sendCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-  fetchCommentData(article_id)
+  const query = req.query;
+  fetchCommentData(article_id, query)
     .then((commentData) => {
+      if (commentData.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
       res.status(200).send({ commentData });
     })
     .catch(next);
