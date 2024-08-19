@@ -300,346 +300,323 @@ describe("PATCH - Increases votes by article_id", () => {
       });
   });
 });
-describe("DELETE comment by comment id", () => {
-  test("When given a delete request and a comment_id, deletes that comment", () => {
-    return request(app).delete("/api/comments/1").expect(204);
-  });
-  test("When given a delete request for a comment id which doesn't exist, returns 40 Not Found", () => {
-    return request(app)
-      .delete("/api/comments/9999")
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("comment not found");
-      });
-  });
-  test("When given an invalid id, returns 400, Bad Request", () => {
-    return request(app)
-      .delete("/api/comments/NaN")
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
-  });
-});
 describe("PATCH - Increase votes by comment_id", () => {
   test("When given a request body with a key of inc_votes and an INT, updates the vote count and returns the updated comment with increased vote count", () => {
     return request(app)
-      .patch("/api/comments/1")
-      .expect(200)
-      .send({ inc_votes: 1 })
-      .then(({ body }) => {
-        const { commentData } = body;
-        expect(commentData).toMatchObject({
-          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-          votes: 17,
-          author: "butter_bridge",
-          article_id: 9,
-          created_at: "2020-04-06T12:17:00.000Z",
-        });
+    .patch("/api/comments/1")
+    .expect(200)
+    .send({ inc_votes: 1 })
+    .then(({ body }) => {
+      const { commentData } = body;
+      expect(commentData).toMatchObject({
+        body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        votes: 17,
+        author: "butter_bridge",
+        article_id: 9,
+        created_at: "2020-04-06T12:17:00.000Z",
       });
+    });
   });
   test("When given a request body with a key of inc_votes and a String, returns 400, bad request", () => {
     return request(app)
-      .patch("/api/comments/1")
-      .expect(400)
-      .send({ inc_votes: "dennis" })
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
+    .patch("/api/comments/1")
+    .expect(400)
+    .send({ inc_votes: "dennis" })
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
   });
   test("When given a request body with a key of inc_votes and a String, but comment_id is incorrect data, returns 400, Bad Request", () => {
     return request(app)
-      .patch("/api/comments/vegetables")
-      .expect(400)
-      .send({ inc_votes: 1 })
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
+    .patch("/api/comments/vegetables")
+    .expect(400)
+    .send({ inc_votes: 1 })
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
   });
   test("When given a request body with a key of inc_votes and a String, but comment_id doesn't exist , returns 404, Not Found", () => {
     return request(app)
-      .patch("/api/comments/1000000000")
-      .expect(404)
-      .send({ inc_votes: 1 })
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("comment not found");
-      });
+    .patch("/api/comments/1000000000")
+    .expect(404)
+    .send({ inc_votes: 1 })
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("comment not found");
+    });
   });
 });
 describe("GET API Users", () => {
   test("Should return status 200 and an array containing all user objects", () => {
     return request(app)
-      .get("/api/users/")
-      .expect(200)
-      .then(({ body }) => {
-        const { userData } = body;
-        expect(userData.length).toBe(4);
-        userData.forEach((user) => {
-          expect(user).toMatchObject({
-            username: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
-          });
+    .get("/api/users/")
+    .expect(200)
+    .then(({ body }) => {
+      const { userData } = body;
+      expect(userData.length).toBe(4);
+      userData.forEach((user) => {
+        expect(user).toMatchObject({
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String),
         });
       });
+    });
   });
 });
 describe("GET API Articles by topic query", () => {
   test("Responds with 200 and an array of all articles, filtered by topic query", () => {
     return request(app)
-      .get("/api/articles?topic=cats")
-      .expect(200)
-      .then(({ body }) => {
-        const { articleData } = body;
-        expect(articleData.length).toBe(1);
-        articleData.forEach((article) => {
-          expect(article).toMatchObject({
-            article_id: expect.any(Number),
-            title: expect.any(String),
-            topic: expect.any(String),
-            author: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-          });
-        });
-      });
-  });
-  test("Responds with 404 - Not Found when given an invalid query", () => {
-    return request(app)
-      .get("/api/articles?topic=match")
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Not Found");
-      });
-  });
-  test("Responds with 200 and empty array if given a valid topic with no articles", () => {
-    return request(app)
-      .get("/api/articles?topic=paper")
-      .expect(200)
-      .then(({ body }) => {
-        const { articleData } = body;
-        expect(articleData.length).toBe(0);
-      });
-  });
-});
-describe("GET API Articles by id Comment count", () => {
-  test("Adds a comment count to articles by id request", () => {
-    return request(app)
-      .get("/api/articles/1")
-      .expect(200)
-      .then(({ body }) => {
-        const { article } = body;
-        expect.objectContaining({
-          comment_count: "11",
-        });
-      });
-  });
-  test("Receives error 404 not found when given an incorrect article id number", () => {
-    return request(app)
-      .get("/api/articles/100")
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Article ID Not Found");
-      });
-  });
-  test("Receives error 400 bad request when given an incorrect article id number", () => {
-    return request(app)
-      .get("/api/articles/dennis")
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
-  });
-});
-describe("GET user by username", () => {
-  test("When given a request for a user profile by username, responds with user object", () => {
-    return request(app)
-      .get("/api/users/lurker")
-      .expect(200)
-      .then(({ body }) => {
-        const { userData } = body;
-        expect(userData).toMatchObject({
-          username: "lurker",
-          name: "do_nothing",
-          avatar_url:
-            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-        });
-      });
-  });
-  test("When given a request for a non-existent user, returns 404 not found", () => {
-    return request(app)
-      .get("/api/users/tomflippantname")
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("User Not Found");
-      });
-  });
-});
-describe("GET articles by topic", () => {
-  test("When given a request for all articles by topic, responds with all articles by topic", () => {
-    return request(app)
-      .get("/api/articles/topics/cats")
-      .expect(200)
-      .then(({ body }) => {
-        const { articleData } = body;
-        expect.objectContaining({
+    .get("/api/articles?topic=cats")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(1);
+      articleData.forEach((article) => {
+        expect(article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
-          topic: "cats",
+          topic: expect.any(String),
           author: expect.any(String),
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
         });
       });
+    });
+  });
+  test("Responds with 404 - Not Found when given an invalid query", () => {
+    return request(app)
+    .get("/api/articles?topic=match")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Not Found");
+    });
+  });
+  test("Responds with 200 and empty array if given a valid topic with no articles", () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(0);
+    });
+  });
+});
+describe("GET API Articles by id Comment count", () => {
+  test("Adds a comment count to articles by id request", () => {
+    return request(app)
+    .get("/api/articles/1")
+    .expect(200)
+    .then(({ body }) => {
+      const { article } = body;
+      expect.objectContaining({
+        comment_count: "11",
+      });
+    });
+  });
+  test("Receives error 404 not found when given an incorrect article id number", () => {
+    return request(app)
+    .get("/api/articles/100")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Article ID Not Found");
+    });
+  });
+  test("Receives error 400 bad request when given an incorrect article id number", () => {
+    return request(app)
+    .get("/api/articles/dennis")
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
+  });
+});
+describe("GET user by username", () => {
+  test("When given a request for a user profile by username, responds with user object", () => {
+    return request(app)
+    .get("/api/users/lurker")
+    .expect(200)
+    .then(({ body }) => {
+      const { userData } = body;
+      expect(userData).toMatchObject({
+        username: "lurker",
+        name: "do_nothing",
+        avatar_url:
+        "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+      });
+    });
+  });
+  test("When given a request for a non-existent user, returns 404 not found", () => {
+    return request(app)
+    .get("/api/users/tomflippantname")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("User Not Found");
+    });
+  });
+});
+describe("GET articles by topic", () => {
+  test("When given a request for all articles by topic, responds with all articles by topic", () => {
+    return request(app)
+    .get("/api/articles/topics/cats")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect.objectContaining({
+        article_id: expect.any(Number),
+        title: expect.any(String),
+        topic: "cats",
+        author: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+        article_img_url: expect.any(String),
+      });
+    });
   });
 });
 describe("POST new article", () => {
   test("When a user posts a new article, returns an object containing article, article_id, topic, votes, comments and user", () => {
     return request(app)
-      .post("/api/articles/")
-      .send({
-        author: "lurker",
+    .post("/api/articles/")
+    .send({
+      author: "lurker",
+      title: "Eddie is a good boy",
+      body: "A very good boy, indeed. He is, however, a non-cat",
+      article_img_url: "https://i.imgur.com/jsvTeiP.jpeg",
+      topic: "cats",
+    })
+    .expect(201)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData).toMatchObject({
+        article_id: expect.any(Number),
         title: "Eddie is a good boy",
-        body: "A very good boy, indeed. He is, however, a non-cat",
-        article_img_url: "https://i.imgur.com/jsvTeiP.jpeg",
+        author: "lurker",
         topic: "cats",
-      })
-      .expect(201)
-      .then(({ body }) => {
-        const { articleData } = body;
-        expect(articleData).toMatchObject({
-          article_id: expect.any(Number),
-          title: "Eddie is a good boy",
-          author: "lurker",
-          topic: "cats",
-          body: "A very good boy, indeed. He is, however, a non-cat",
-          votes: 0,
-          article_img_url: "https://i.imgur.com/jsvTeiP.jpeg",
-        });
-        expect(new Date(articleData.created_at).toString()).not.toBe(
-          "Invalid Date"
-        );
+        body: "A very good boy, indeed. He is, however, a non-cat",
+        votes: 0,
+        article_img_url: "https://i.imgur.com/jsvTeiP.jpeg",
       });
+      expect(new Date(articleData.created_at).toString()).not.toBe(
+        "Invalid Date"
+      );
+    });
   });
   test("When a user posts a new article with no body, returns error", () => {
     return request(app)
-      .post("/api/articles/")
-      .send({
-        author: "lurker",
-        title: "Mr No Body",
-        body: null,
-        article_img_url: null,
-        topic: "cooking",
-      })
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
+    .post("/api/articles/")
+    .send({
+      author: "lurker",
+      title: "Mr No Body",
+      body: null,
+      article_img_url: null,
+      topic: "cooking",
+    })
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
   });
   test("When a user posts a new article with an non-existent topic, returns error", () => {
     return request(app)
-      .post("/api/articles/")
-      .send({
-        author: "lurker",
-        title: "Caaats. What arre thheyy?",
-        body: "I'm affrraaid this is going to faaaail",
-        article_img_url: null,
-        topic: "crats",
-      })
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
+    .post("/api/articles/")
+    .send({
+      author: "lurker",
+      title: "Caaats. What arre thheyy?",
+      body: "I'm affrraaid this is going to faaaail",
+      article_img_url: null,
+      topic: "crats",
+    })
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
   });
 });
 describe("GET API Articles, limited by query", () => {
   test("When GET request made for articles, with pagination limits set in query, responds with that number of articles", () => {
     return request(app)
-      .get("/api/articles?limit=10")
-      .expect(200)
-      .then(({ body }) => {
-        const { articleData } = body;
-        expect(articleData.length).toBe(10);
-        expect(articleData[0].total_count).toBe("13");
-      });
+    .get("/api/articles?limit=10")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(10);
+      expect(articleData[0].total_count).toBe("13");
+    });
   });
   test("When GET request made for articles, with pagination limits set in query, AND p specified as 1, returns page 2 of test articles", () => {
     return request(app)
-      .get("/api/articles?limit=10&p=2")
-      .expect(200)
-      .then(({ body }) => {
-        const { articleData } = body;
-        expect(articleData.length).toBe(3);
-      });
+    .get("/api/articles?limit=10&p=2")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(3);
+    });
   });
   test("When GET request made for articles, with pagination query set as incorrect data format, gives 400, bad request", () => {
     return request(app)
-      .get("/api/articles?limit=dennis")
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
+    .get("/api/articles?limit=dennis")
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
   });
   test("When GET request made for articles, with pagination query set to a later page than exists, gives 404, not found", () => {
     return request(app)
-      .get("/api/articles?limit=10&p=4")
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Not Found");
-      });
+    .get("/api/articles?limit=10&p=4")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Not Found");
+    });
   });
 });
 describe("GET API Comments by Article ID, limited by query", () => {
   test("When GET request made for comments, with pagination limits set in query, responds with that number of comments", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=10")
-      .expect(200)
-      .then(({ body }) => {
-        const { commentData } = body;
-        expect(commentData.length).toBe(10);
-      });
+    .get("/api/articles/1/comments?limit=10")
+    .expect(200)
+    .then(({ body }) => {
+      const { commentData } = body;
+      expect(commentData.length).toBe(10);
+    });
   });
   test("When GET request made for API Comments by Article ID, with pagination limits set in query, AND p specified as 1, returns page 2 of test comments", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=10&p=2")
-      .expect(200)
-      .then(({ body }) => {
-        const { commentData } = body;
-        expect(commentData.length).toBe(1);
-      });
+    .get("/api/articles/1/comments?limit=10&p=2")
+    .expect(200)
+    .then(({ body }) => {
+      const { commentData } = body;
+      expect(commentData.length).toBe(1);
+    });
   });
   test("When GET request made for API Comments by Article ID, with pagination query set as incorrect data format, gives 400, bad request", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=dennis")
-      .expect(400)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Bad Request");
-      });
+    .get("/api/articles/1/comments?limit=dennis")
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Bad Request");
+    });
   });
   test("When GET request made for API Comments by Article ID, with pagination query set to a later page than exists, gives 404, not found", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=10&p=4")
-      .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toBe("Not Found");
-      });
+    .get("/api/articles/1/comments?limit=10&p=4")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Not Found");
+    });
   });
 });
 describe("POST new topic",()=>{
@@ -682,4 +659,51 @@ describe("POST new topic",()=>{
       expect(msg).toBe("Conflict")
     })
   })
+})
+describe("DELETE comment by comment id", () => {
+  test("When given a delete request and a comment_id, deletes that comment", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("When given a delete request for a comment id which doesn't exist, returns 404 Not Found", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("comment not found");
+      });
+  });
+  test("When given an invalid id, returns 400, Bad Request", () => {
+    return request(app)
+      .delete("/api/comments/NaN")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+describe.only("DELETE article by article ID",()=>{
+  test("When given a delete request for articles by article id, removes the article and sends 204 status",()=>{
+    return request(app)
+    .delete("/api/articles/1").expect(204);
+  })
+  test("When given a delete request for an article id which doesn't exist, returns 404 Not Found", () => {
+    return request(app)
+      .delete("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("article not found");
+      });
+  });
+  test("When given an invalid id, returns 400, Bad Request", () => {
+    return request(app)
+      .delete("/api/articles/NaN")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("Bad Request");
+      });
+  });
 })

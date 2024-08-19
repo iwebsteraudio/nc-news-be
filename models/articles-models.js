@@ -85,23 +85,17 @@ exports.fetchCommentData = (article_id, query) => {
     WHERE article_id = $1
     ORDER BY created_at DESC`;
 
-if (query.limit) {
-queryString += ` LIMIT ${query.limit}`;
-}
-if (query.p) {
-queryString += ` OFFSET ${query.limit} * ${query.p - 1}`;
-}
+  if (query.limit) {
+    queryString += ` LIMIT ${query.limit}`;
+  }
+  if (query.p) {
+    queryString += ` OFFSET ${query.limit} * ${query.p - 1}`;
+  }
 
-queryString += `;`;
-  return db
-    .query(
-      queryString,
-      [article_id]
-    )
-    .then(({ rows }) => {
-  
-      return rows;
-    });
+  queryString += `;`;
+  return db.query(queryString, [article_id]).then(({ rows }) => {
+    return rows;
+  });
 };
 
 exports.postCommentData = (article_id, user_name, body) => {
@@ -172,5 +166,28 @@ exports.postArticleData = (params) => {
     )
     .then((result) => {
       return result.rows[0];
+    });
+};
+
+exports.removeArticleById = (article_id) => {
+  return db
+    .query(`DELETE FROM comments WHERE article_id = $1;`, [article_id])
+    .then(() => {
+      return db.query(
+        `DELETE FROM articles WHERE article_id = $1 RETURNING *;`,
+        [article_id]
+      );
+    })
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "article not found",
+        })
+      }
+      return result.rows;
+    })
+    .catch((err) => {
+      throw err;
     });
 };

@@ -153,5 +153,12 @@
       "slug": "topic name here",
       "description": "description here"
     }
+  },
+  "DELETE /api/articles/article_id": {
+    "description": "delete an article based on an id, and its respective comments.",
+    "queries": ["id"],
+    "exampleResponse": {
+      "status code": 204
+    }
   }
 }
