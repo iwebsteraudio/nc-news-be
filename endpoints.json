@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "articles": [
         {
@@ -40,7 +40,7 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "Responds with an array of comments for the given article_id",
-    "queries": ["id"],
+    "queries": ["id", "limit", "p"],
     "exampleResponse": {
       "comment_id": "1",
       "votes": "16",
@@ -106,6 +106,52 @@
       "username": "lurker",
       "name": "do_nothing",
       "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates votes on comment given comment's comment_id",
+    "queries": ["inc_votes"],
+    "exampleRequestBody": {
+      "inc_votes": 1
+    },
+    "exampleResponse": {
+      "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      "votes": 17,
+      "author": "butter_bridge",
+      "article_id": 9,
+      "created_at": "2020-04-06T12:17:00.000Z"
+    }
+  },
+  "POST /api/articles": {
+    "description": "add a new article.",
+    "queries": [],
+    "exampleRequestBody": {
+      "author": "lurker",
+      "title": "Eddie is a good boy",
+      "body": "A very good boy, indeed. He is, however, a non-cat",
+      "article_img_url": "https://i.imgur.com/jsvTeiP.jpeg",
+      "topic": "cats"
+    },
+    "exampleResponse": {
+      "article_id": 155,
+      "title": "Eddie is a good boy",
+      "author": "lurker",
+      "topic": "cats",
+      "body": "A very good boy, indeed. He is, however, a non-cat",
+      "votes": 0,
+      "article_img_url": "https://i.imgur.com/jsvTeiP.jpeg"
+    }
+  },
+  "POST /api/topics": {
+    "description": "add new topic.",
+    "queries": [],
+    "exampleRequestBody": {
+      "slug": "topic name here",
+      "description": "description here"
+    },
+    "exampleResponse": {
+      "slug": "topic name here",
+      "description": "description here"
     }
   }
 }

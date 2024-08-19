@@ -642,3 +642,44 @@ describe("GET API Comments by Article ID, limited by query", () => {
       });
   });
 });
+describe.only("POST new topic",()=>{
+  test("When POST request made for a new topic, returns status 200 and a topic object",()=>{
+    return request(app)
+    .post(`/api/topics/`)
+    .send({
+      slug: "Dogs",
+      description : "Not Cats"
+    })
+    .expect(201)
+    .then(({body})=>{
+      const {topicData} = body;
+      expect(topicData).toMatchObject({
+        slug: "Dogs",
+        description : "Not Cats"
+      })
+    })
+  })
+  test("When POST request made for new topic with blank object, returns 400 Bad Request",()=>{
+    return request(app)
+    .post(`/api/topics/`)
+    .send({})
+    .expect(400)
+    .then(({body})=>{
+      const {msg} = body;
+      expect(msg).toBe("Bad Request")
+    })
+  })
+  test("When POST request made for new topic which matches existing topic (regardless of case), returns 409, Conflict", ()=>{
+    return request(app)
+    .post(`/api/topics/`)
+    .send({
+      slug: "Cats",
+      description: "Not dogs"
+    })
+    .expect(409)
+    .then(({body})=>{
+      const {msg} = body;
+      expect(msg).toBe("Conflict")
+    })
+  })
+})
