@@ -56,7 +56,6 @@ exports.fetchArticleData = (query) => {
   return db
     .query(queryString, queryStringArray)
     .then(({ rows }) => {
-      console.log(rows)
       return rows;
     })
     .catch((err) => {

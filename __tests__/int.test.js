@@ -604,7 +604,7 @@ describe("GET API Articles, limited by query", () => {
       });
   });
 });
-describe.only("GET API Comments by Article ID, limited by query", () => {
+describe("GET API Comments by Article ID, limited by query", () => {
   test("When GET request made for comments, with pagination limits set in query, responds with that number of comments", () => {
     return request(app)
       .get("/api/articles/1/comments?limit=10")
