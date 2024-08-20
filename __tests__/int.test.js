@@ -683,7 +683,7 @@ describe("DELETE comment by comment id", () => {
       });
   });
 });
-describe.only("DELETE article by article ID",()=>{
+describe("DELETE article by article ID",()=>{
   test("When given a delete request for articles by article id, removes the article and sends 204 status",()=>{
     return request(app)
     .delete("/api/articles/1").expect(204);
