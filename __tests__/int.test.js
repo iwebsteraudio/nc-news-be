@@ -17,6 +17,7 @@ describe("GET /api/topics", () => {
       .then(({ body }) => {
         const { topicData } = body;
         expect(topicData.length).toBe(3);
+        console.log(topicData)
         topicData.forEach((topic) => {
           expect.objectContaining({
             slug: expect.any(String),
