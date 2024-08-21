@@ -366,46 +366,7 @@ describe("GET API Users", () => {
     });
   });
 });
-describe("GET API Articles by topic query", () => {
-  test("Responds with 200 and an array of all articles, filtered by topic query", () => {
-    return request(app)
-    .get("/api/articles?topic=cats")
-    .expect(200)
-    .then(({ body }) => {
-      const { articleData } = body;
-      expect(articleData.length).toBe(1);
-      articleData.forEach((article) => {
-        expect(article).toMatchObject({
-          article_id: expect.any(Number),
-          title: expect.any(String),
-          topic: expect.any(String),
-          author: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
-          article_img_url: expect.any(String),
-        });
-      });
-    });
-  });
-  test("Responds with 404 - Not Found when given an invalid query", () => {
-    return request(app)
-    .get("/api/articles?topic=match")
-    .expect(404)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toBe("Not Found");
-    });
-  });
-  test("Responds with 200 and empty array if given a valid topic with no articles", () => {
-    return request(app)
-    .get("/api/articles?topic=paper")
-    .expect(200)
-    .then(({ body }) => {
-      const { articleData } = body;
-      expect(articleData.length).toBe(0);
-    });
-  });
-});
+
 describe("GET API Articles by id Comment count", () => {
   test("Adds a comment count to articles by id request", () => {
     return request(app)
@@ -459,25 +420,6 @@ describe("GET user by username", () => {
     .then(({ body }) => {
       const { msg } = body;
       expect(msg).toBe("User Not Found");
-    });
-  });
-});
-describe("GET articles by topic", () => {
-  test("When given a request for all articles by topic, responds with all articles by topic", () => {
-    return request(app)
-    .get("/api/articles/topics/cats")
-    .expect(200)
-    .then(({ body }) => {
-      const { articleData } = body;
-      expect.objectContaining({
-        article_id: expect.any(Number),
-        title: expect.any(String),
-        topic: "cats",
-        author: expect.any(String),
-        created_at: expect.any(String),
-        votes: expect.any(Number),
-        article_img_url: expect.any(String),
-      });
     });
   });
 });
@@ -707,3 +649,80 @@ describe("DELETE article by article ID",()=>{
       });
   });
 })
+describe("GET API Articles by topic query", () => {
+  test("Responds with 200 and an array of all articles, filtered by topic query", () => {
+    return request(app)
+    .get("/api/articles?topic=cats")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(1);
+      articleData.forEach((article) => {
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+    });
+  });
+  test("Responds with 404 - Not Found when given an invalid query", () => {
+    return request(app)
+    .get("/api/articles?topic=match")
+    .expect(404)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toBe("Not Found");
+    });
+  });
+  test("Responds with 200 and empty array if given a valid topic with no articles", () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect(articleData.length).toBe(0);
+    });
+  });
+});
+describe("GET topic articles", () => {
+  test("When given a request for all articles by topic, responds with all articles by topic", () => {
+    return request(app)
+    .get("/api/topics/cats/articles")
+    .expect(200)
+    .then(({ body }) => {
+      const { articleData } = body;
+      expect.objectContaining({
+        article_id: expect.any(Number),
+        title: expect.any(String),
+        topic: "cats",
+        author: expect.any(String),
+        created_at: expect.any(String),
+        votes: expect.any(Number),
+        article_img_url: expect.any(String),
+      });
+    });
+  });
+  test("When articles requested by topic and given query to sort by votes, returns 200 and an array of articles sorted by votes.",()=>{
+    return request(app)
+    .get("/api/topics/mitch/articles?sort_by=votes")
+    .expect(200)
+    .then(({body})=>{
+      const { articleData } = body;
+      expect(articleData).toBeSortedBy(articleData.votes)
+    })
+  })
+  test("When articles requested by topic and given query to limit articles to 10, returns 200 and an array of 10 articles",()=>{
+    return request(app)
+    .get("/api/topics/mitch/articles?limit=10")
+    .expect(200)
+    .then(({body})=>{
+      const {articleData} = body;
+      expect(articleData.length).toBe(10)
+    })
+  })
+});

@@ -5,7 +5,7 @@ const {
   sendCommentsByArticleId,
   postCommentsByArticleId,
   patchArticleById,
-  sendArticleByTopic,
+  sendArticleByTopicQuery,
   postNewArticle,
   deleteArticleById
 } = require("../controllers/articles-controllers");
@@ -17,8 +17,6 @@ articleRouter
   .get(sendArticleById)
   .patch(patchArticleById)
   .delete(deleteArticleById);
-
-articleRouter.route("/topics/:topic").get(sendArticleByTopic);
 
 articleRouter
   .route("/:article_id/comments")

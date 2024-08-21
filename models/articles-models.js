@@ -63,22 +63,6 @@ exports.fetchArticleData = (query) => {
     });
 };
 
-exports.fetchArticleByTopic = (topic) => {
-  return db
-    .query(
-      `SELECT articles.article_id, articles.title, topic, articles.author, articles.created_at, articles.votes, articles.article_img_url,
-      COUNT(comment_id)::int AS comment_count
-      FROM articles
-      LEFT JOIN comments ON comments.article_id = articles.article_id
-      WHERE topic = $1
-      GROUP BY articles.article_id;`,
-      [topic]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
-};
-
 exports.fetchCommentData = (article_id, query) => {
   let queryString = `SELECT * 
     FROM comments

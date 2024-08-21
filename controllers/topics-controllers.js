@@ -2,6 +2,7 @@ const {
   fetchTopics,
   postTopic,
   checkIfTopic,
+  fetchArticleByTopic,
 } = require("../models/topics-models");
 
 exports.sendTopicData = (req, res, next) => {
@@ -34,6 +35,19 @@ exports.postTopicData = (req, res, next) => {
   postTopic(slug, description)
     .then((topicData) => {
       res.status(201).send({ topicData });
+    })
+    .catch(next);
+};
+
+exports.sendArticleByTopic = (req, res, next) => {
+  const { topic } = req.params;
+  const query = req.query;
+  fetchArticleByTopic(topic, query)
+    .then((articleData) => {
+      if (articleData.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+      res.status(200).send({ articleData });
     })
     .catch(next);
 };
