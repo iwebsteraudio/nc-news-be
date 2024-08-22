@@ -727,3 +727,25 @@ describe("GET topic articles", () => {
     })
   })
 });
+describe("GET API Articles Ordered by asc or desc depending on query",()=>{
+  test("When all articles are requested, sorted by article_id asc, returns articles sorted by article_id asc",()=>{
+    return request(app)
+    .get("/api/articles?sort_by=article_id&order_by=ASC")
+    .expect(200)
+    .then(({body})=>{
+      const {articleData} = body;
+      console.log(articleData)
+      expect(articleData).toBeSortedBy("article_id", {descending: false})
+    })
+  })
+  test("When all articles are requested, sorted by comments desc, returns articles sorted with comments desc",()=>{
+    return request(app)
+    .get("/api/articles?sort_by=comment_count&order_by=desc")
+    .expect(200)
+    .then(({body})=>{
+      const {articleData} = body;
+      console.log(articleData)
+      expect(articleData).toBeSortedBy("comment_count", {descending: true})
+    })
+  })
+})

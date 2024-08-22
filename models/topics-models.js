@@ -44,10 +44,17 @@ exports.fetchArticleByTopic = (topic, query) => {
       GROUP BY articles.article_id`;
 
       if (query.sort_by) {
-        queryString += ` ORDER BY ${query.sort_by} DESC;`;
+        queryString += ` ORDER BY ${query.sort_by}`;
       } else {
-        queryString += ` ORDER BY articles.created_at DESC`;
+        queryString += ` ORDER BY articles.created_at`;
       }
+
+      if (query.order_by){
+        queryString += ` ${query.order_by}`
+      } else {
+        queryString += ` DESC`
+      }
+
       if (query.limit) {
         queryString += ` LIMIT ${query.limit}`;
       }

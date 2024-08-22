@@ -41,6 +41,7 @@ exports.sendArticleData = (req, res, next) => {
           return fetchArticleData({
             slug: query.topic,
             sort_by: query.sort_by,
+            order_by: query.order_by,
           });
         } else {
           return Promise.reject({
